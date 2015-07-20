@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.List;
 
 
 public class MainActivity extends Activity {
@@ -37,6 +38,14 @@ public class MainActivity extends Activity {
 //        Topic.addTopic("My childhood.");
 
         refreshListView();
+        ListView listView = (ListView)findViewById(R.id.lv_topic);
+        registerForContextMenu(listView);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                
+            }
+        });
     }
 
     @Override
@@ -81,7 +90,11 @@ public class MainActivity extends Activity {
         switch (v.getId()){
             case R.id.lv_topic:
                 AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
-
+                menu.setHeaderTitle(Topic.getTopicList().get(info.position).toString());
+                String [] menuItem = getResources().getStringArray(R.array.arrayTopicContextMenu);
+                for (int i=0; i < menuItem.length;i++){
+                    menu.add(Menu.NONE,i,0,menuItem[i]);
+                }
                 break;
             default:
                 break;
