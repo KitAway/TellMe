@@ -14,10 +14,11 @@ import java.util.ArrayList;
  */
 
 public class Topic implements Serializable{
+    public static boolean firstRun=false;
     private String topic;
     private static String data_storage;
-    private static ArrayList<Topic> topicList;
-    private ArrayList<Questions> questionList;
+    private static ArrayList<Topic> topicList=null;
+    private ArrayList<Questions> questionList=null;
 
     public Topic(String topic) {
         this.topic = topic;
@@ -44,6 +45,9 @@ public class Topic implements Serializable{
         return topicList.contains(this) || topicList.add(this);
     }
 
+    public boolean removeTopic(){
+        return !topicList.contains(this)||topicList.remove(this);
+    }
     public ArrayList<String> getQuestions(){
         ArrayList<String> arrayList = new ArrayList<>();
         for (Questions questions:questionList){
@@ -58,33 +62,66 @@ public class Topic implements Serializable{
         restoreResult();
     }
     public static void storeResult(){
+        FileOutputStream fout=null;
+        ObjectOutputStream objOut=null;
         try {
-            FileOutputStream fout = new FileOutputStream(data_storage);
-            ObjectOutputStream objOut = new ObjectOutputStream(fout);
+            fout= new FileOutputStream(data_storage);
+             objOut= new ObjectOutputStream(fout);
             objOut.writeObject(topicList);
 
-            objOut.close();
-            fout.close();
+
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            if(objOut!=null)
+                try{
+                    objOut.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            if(fout!=null){
+                try{
+                    fout.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
     private static void restoreResult(){
+        FileInputStream fin=null;
+        ObjectInputStream objIn=null;
+        if(topicList !=null)
+            return;
         if(new File(data_storage).isFile()) {
             try {
-                FileInputStream fin = new FileInputStream(data_storage);
-                ObjectInputStream objIn = new ObjectInputStream(fin);
+                fin = new FileInputStream(data_storage);
+                objIn = new ObjectInputStream(fin);
                 topicList = (ArrayList<Topic>) objIn.readObject();
-
-                objIn.close();
-                fin.close();
+                firstRun=false;
             } catch (ClassNotFoundException | IOException e) {
                 e.printStackTrace();
+                firstRun=true;
+                topicList=new ArrayList<>();
+            } finally {
+                if(objIn!=null)
+                    try {
+                        objIn.close();
+                    } catch (IOException e){
+                        e.printStackTrace();
+                    }
+                if(fin!=null)
+                    try{
+                        fin.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
             }
         }
-        else if(topicList==null){
+        else{
             topicList=new ArrayList<>();
+            firstRun=true;
         }
     }
 
@@ -102,5 +139,13 @@ public class Topic implements Serializable{
         Topic topic1 = new Topic(topic);
         if (!topicList.contains(topic1))
             topicList.add(topic1);
+    }
+
+    public static void removeTopic(int id){
+        topicList.remove(id);
+    }
+
+    public static void removeTopic(String topic){
+        topicList.remove(topicList.indexOf(new Topic(topic)));
     }
 }

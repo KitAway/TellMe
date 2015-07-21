@@ -4,5 +4,11 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="listTopic">Topics:</string>
+    <string name="listQuestion">Questions:</string>
     <string name="str_addTopic">Add topic</string>
+    <string name="str_addQuestion">Add Questions</string>
+    <string name="inputName">Please enter here.</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="title_activity_question">QuestionActivity</string>
 </resources>

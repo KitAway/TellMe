@@ -15,6 +15,16 @@ public class Questions implements Serializable{
         Questions.app_path = app_path;
     }
 
+    public static String getApp_path() {
+        return app_path;
+    }
+
+    public String getPath(){
+        if(filename!=null)
+            return app_path+filename;
+        else
+            return null;
+    }
 
     public Questions(String question) {
         this.question = question;

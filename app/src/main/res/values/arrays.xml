@@ -3,7 +3,13 @@
 
     <string-array name="arrayTopicContextMenu">
         <item>Start topic</item>
-        <item>Check questions</item>
+        <item>View questions</item>
         <item>Remove topic</item>
+    </string-array>
+
+    <string-array name="arrayQuestionContextMenu">
+        <item>Listen the answer</item>
+        <item>Add/Change the answer</item>
+        <item>Delete the question</item>
     </string-array>
 </resources>
