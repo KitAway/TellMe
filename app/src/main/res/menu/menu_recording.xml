@@ -1,9 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:activity="com.example.d038395.tellme.QuestionActivity">
+    tools:context="com.example.d038395.tellme.Recording">
     <!--<item android:id="@+id/action_settings" android:title="@string/action_settings"-->
         <!--android:orderInCategory="100" android:showAsAction="never" />-->
-    <item android:id="@+id/action_addQuestion"
-        android:showAsAction="ifRoom"
-        android:title="@string/str_addQuestion"/>
 </menu>

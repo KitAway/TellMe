@@ -9,6 +9,7 @@ import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -60,26 +61,62 @@ public class QuestionActivity extends Activity {
         AdapterView.AdapterContextMenuInfo info =
                 (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
         int menuItemId=item.getItemId();
-        String [] menuItem = getResources().getStringArray(R.array.arrayQuestionContextMenu);
-        String menuItemName=menuItem[menuItemId];
+//        String [] menuItem = getResources().getStringArray(R.array.arrayQuestionContextMenu);
+//        String menuItemName=menuItem[menuItemId];
         int questionId= info.position;
+        final Questions question=topic.getQuestionList().get(questionId);
         switch (menuItemId) {
             case 0:
-                Questions question=topic.getQuestionList().get(menuItemId);
                 String audioPath=question.getPath();
                 if(audioPath!=null)
                     new AudioPlayer(this,audioPath,
-                            topic.getQuestionList().get(questionId).toString()).play();
+                            question.toString()).play();
                 else Toast.makeText(this, "No record exists.", Toast.LENGTH_LONG).show();
                 break;
             case 1:
+                audioPath=question.getPath();
+                if(audioPath!=null){
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setMessage("Answer exists, do you want to change the answer?")
+                            .setTitle("Warning")
+                            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    recordAnswer(question);
+                                }
+                            })
+                            .setNegativeButton(R.string.cancel,null)
+                            .create().show();
+                }
+                else recordAnswer(question);
                 break;
             case 2:
+                removeQuestion(questionId);
                 break;
             default:
                 break;
         }
         return true;
+    }
+
+    private void recordAnswer(Questions questions){
+        Intent intent = new Intent(this,Recording.class);
+        intent.putExtra("Question",questions);
+        startActivity(intent);
+    }
+    private void removeQuestion(final int questionId){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Do you want to delete this question?")
+                .setTitle("Warning")
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        topic.getQuestionList().remove(questionId);
+                        refreshQuestionList();
+                    }
+                })
+                .setNegativeButton(R.string.cancel,null)
+                .create().show();
     }
 
     private void refreshQuestionList(){
@@ -119,6 +156,7 @@ public class QuestionActivity extends Activity {
 
     private void addQuestion(){
         AlertDialog.Builder builder= new AlertDialog.Builder(this);
+        final AlertDialog dialog;
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_addtopic,null);
         final EditText editText =(EditText) dialogView.findViewById(R.id.et_topicName);
         builder.setTitle("Add new Question")
@@ -131,6 +169,15 @@ public class QuestionActivity extends Activity {
                     }
                 })
                 .setNegativeButton(R.string.cancel,null);
-        builder.create().show();
+        dialog=builder.create();
+        editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus)
+                    dialog.getWindow().
+                            setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+            }
+        });
+        dialog.show();
     }
 }

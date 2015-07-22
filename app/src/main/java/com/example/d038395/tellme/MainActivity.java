@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -89,8 +90,8 @@ public class MainActivity extends Activity {
         AdapterView.AdapterContextMenuInfo info =
                 (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
         int menuItemId=item.getItemId();
-        String [] menuItem = getResources().getStringArray(R.array.arrayTopicContextMenu);
-        String menuItemName=menuItem[menuItemId];
+//        String [] menuItem = getResources().getStringArray(R.array.arrayTopicContextMenu);
+//        String menuItemName=menuItem[menuItemId];
         int topicId= info.position;
         switch (menuItemId) {
             case 0:
@@ -99,8 +100,7 @@ public class MainActivity extends Activity {
                 viewQuestion(topicId);
                 break;
             case 2:
-                Topic.removeTopic(topicId);
-                refreshListView();
+                removeTopic(topicId);
                 break;
             default:
                 break;
@@ -127,6 +127,20 @@ public class MainActivity extends Activity {
         }
     }
 
+    private void removeTopic(final int topicId){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Do you want to delete this topic?")
+                .setTitle("Warning")
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Topic.removeTopic(topicId);
+                        refreshListView();
+                    }
+                })
+                .setNegativeButton(R.string.cancel,null)
+                .create().show();
+    }
     private void refreshListView(){
         ListView listView = (ListView)findViewById(R.id.lv_topic);
         ArrayAdapter arrayAdapter = new ArrayAdapter<>(this, R.layout.topic_list, Topic.getTopicList());
@@ -141,6 +155,7 @@ public class MainActivity extends Activity {
     }
     private void addTopicDialog(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final AlertDialog dialog;
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_addtopic,null);
         final EditText editText =(EditText) dialogView.findViewById(R.id.et_topicName);
         builder.setTitle("Add new Topic")
@@ -153,7 +168,16 @@ public class MainActivity extends Activity {
                     }
                 })
                 .setNegativeButton(R.string.cancel,null);
-        builder.create().show();
+        dialog=builder.create();
+        editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus)
+                    dialog.getWindow().
+                            setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+            }
+        });
+        dialog.show();
     }
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {

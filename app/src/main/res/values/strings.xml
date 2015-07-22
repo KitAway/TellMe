@@ -11,4 +11,6 @@
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="title_activity_question">QuestionActivity</string>
+    <string name="title_activity_recording">Recording</string>
+    <string name="recordTip">Press the button and hold to record</string>
 </resources>

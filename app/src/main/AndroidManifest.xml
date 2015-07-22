@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
 
     <application
         android:allowBackup="true"
@@ -26,6 +27,14 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.d038395.tellme.MainActivity" />
+        </activity>
+        <activity
+            android:name=".Recording"
+            android:label="@string/title_activity_recording"
+            android:parentActivityName=".QuestionActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.d038395.tellme.QuestionActivity" />
         </activity>
     </application>
 

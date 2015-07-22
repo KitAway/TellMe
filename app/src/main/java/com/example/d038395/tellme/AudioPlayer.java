@@ -61,6 +61,7 @@ public class AudioPlayer {
         String filename =audioFile.getName();
         final MediaPlayer mediaPlayer = new MediaPlayer();
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        AlertDialog dialog=null;
         final View dialogView = activity.getLayoutInflater().inflate(R.layout.dialog_player, null);
         builder.setView(dialogView);
         final TextView tvStart = (TextView)dialogView.findViewById(R.id.text_start);
@@ -100,14 +101,6 @@ public class AudioPlayer {
             }
         }
         final AsyncTask<MediaPlayer,Integer,Void> asyncTask =new audioPlayTextUpdate();
-        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                asyncTask.cancel(true);
-                mediaPlayer.stop();
-                mediaPlayer.release();
-            }
-        });
         mediaPlayer.setOnSeekCompleteListener(new MediaPlayer.OnSeekCompleteListener() {
             @Override
             public void onSeekComplete(MediaPlayer mp) {
@@ -151,7 +144,16 @@ public class AudioPlayer {
             seekBar.setMax(duration);
             tvStart.setText(formatMilliToHMS(mediaPlayer.getCurrentPosition()));
             mediaPlayer.start();
-            builder.create().show();
+            dialog=builder.create();
+            dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    asyncTask.cancel(true);
+                    mediaPlayer.stop();
+                    mediaPlayer.release();
+                }
+            });
+            dialog.show();
             asyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,mediaPlayer);
         } catch (IOException e) {
             Toast.makeText(activity,
