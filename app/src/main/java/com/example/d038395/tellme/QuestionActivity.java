@@ -20,13 +20,14 @@ import android.widget.Toast;
 public class QuestionActivity extends Activity {
 
     Topic topic=null;
+    int topicId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_question);
 
         Intent intent=getIntent();
-        int topicId = intent.getIntExtra("TopicId", 0);
+        topicId = intent.getIntExtra("TopicId", 0);
         topic=Topic.getTopicList().get(topicId);
         refreshQuestionList();
 
@@ -63,8 +64,8 @@ public class QuestionActivity extends Activity {
         int menuItemId=item.getItemId();
 //        String [] menuItem = getResources().getStringArray(R.array.arrayQuestionContextMenu);
 //        String menuItemName=menuItem[menuItemId];
-        int questionId= info.position;
-        final Questions question=topic.getQuestionList().get(questionId);
+        final int questionId= info.position;
+        Questions question=topic.getQuestionList().get(questionId);
         switch (menuItemId) {
             case 0:
                 String audioPath=question.getPath();
@@ -82,13 +83,13 @@ public class QuestionActivity extends Activity {
                             .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    recordAnswer(question);
+                                    recordAnswer(questionId);
                                 }
                             })
                             .setNegativeButton(R.string.cancel,null)
                             .create().show();
                 }
-                else recordAnswer(question);
+                else recordAnswer(questionId);
                 break;
             case 2:
                 removeQuestion(questionId);
@@ -99,9 +100,10 @@ public class QuestionActivity extends Activity {
         return true;
     }
 
-    private void recordAnswer(Questions questions){
+    private void recordAnswer(int questionsId){
         Intent intent = new Intent(this,Recording.class);
-        intent.putExtra("Question",questions);
+        intent.putExtra("QuestionId",questionsId);
+        intent.putExtra("TopicId",topicId);
         startActivity(intent);
     }
     private void removeQuestion(final int questionId){

@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -33,7 +34,8 @@ public class MainActivity extends Activity {
         appPath= Environment.getExternalStorageDirectory().getPath()+ File.separator+getString(R.string.app_name)+File.separator;
         File app_path= new File(appPath);
         if(!app_path.isDirectory()){
-            app_path.mkdirs();
+            if(!app_path.mkdirs())
+                Toast.makeText(this,"failed to create directory",Toast.LENGTH_LONG).show();
         }
 
         Questions.setApp_path(appPath);
@@ -97,9 +99,11 @@ public class MainActivity extends Activity {
             case 0:
                 break;
             case 1:
-                viewQuestion(topicId);
                 break;
             case 2:
+                viewQuestion(topicId);
+                break;
+            case 3:
                 removeTopic(topicId);
                 break;
             default:

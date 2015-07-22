@@ -3,6 +3,7 @@
 
     <string-array name="arrayTopicContextMenu">
         <item>Start topic</item>
+        <item>Listen topic</item>
         <item>View questions</item>
         <item>Remove topic</item>
     </string-array>

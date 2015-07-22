@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.media.MediaRecorder;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -25,28 +26,39 @@ public class Recording extends Activity {
     Questions questions;
     MediaRecorder mRecorder;
     String filename;
+    boolean Recording;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recording);
 
         Intent intent = getIntent();
-        questions = (Questions)intent.getExtras().get("Question");
+        Topic topic = Topic.getTopicList().get(intent.getIntExtra("TopicId",0));
+        questions = topic.getQuestionList().get(intent.getIntExtra("QuestionId",0));
 
         filename=questions.getFilename();
-        if(filename==null)
-            filename=UUID.randomUUID().toString();
+        if(filename==null) {
+            filename = UUID.randomUUID().toString();
+            questions.setFilename(filename);
+        }
 
+        Recording=false;
         ImageButton imageButton= (ImageButton)findViewById(R.id.Ibtn_record);
         imageButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()){
                     case MotionEvent.ACTION_DOWN:
-                        startRecording();
+                        if(!Recording) {
+                            startRecording();
+                            Recording = true;
+                        }
                         break;
                     case MotionEvent.ACTION_UP:
-                        stopRecording();
+                        if(Recording) {
+                            stopRecording();
+                            Recording = false;
+                        }
                         break;
                     default:
                         break;

@@ -58,7 +58,6 @@ public class AudioPlayer {
     }
 
     public void play(){
-        String filename =audioFile.getName();
         final MediaPlayer mediaPlayer = new MediaPlayer();
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         AlertDialog dialog=null;
@@ -67,10 +66,8 @@ public class AudioPlayer {
         final TextView tvStart = (TextView)dialogView.findViewById(R.id.text_start);
         TextView tvDuration = (TextView) dialogView.findViewById(R.id.text_duration);
         final SeekBar seekBar = (SeekBar)dialogView.findViewById(R.id.seekbar_player);
-        final TextView tvFilename = ((TextView)dialogView.findViewById(R.id.text_filname));
-        TextView storyName = (TextView)dialogView.findViewById(R.id.text_wholeStory);
+        TextView storyName = (TextView)dialogView.findViewById(R.id.text_filname);
         storyName.setText(title);
-        tvFilename.setText(filename);
         final ImageButton imageButton = (ImageButton)dialogView.findViewById(R.id.btn_control);
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,8 +93,9 @@ public class AudioPlayer {
                 return null;
             }
             protected void onProgressUpdate(Integer... progress) {
-                tvStart.setText(formatMilliToHMS(progress[0]));
                 seekBar.setProgress(progress[0]);
+                tvStart.setText(formatMilliToHMS(progress[0]));
+
             }
         }
         final AsyncTask<MediaPlayer,Integer,Void> asyncTask =new audioPlayTextUpdate();
