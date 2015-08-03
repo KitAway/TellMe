@@ -4,23 +4,34 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.IOException;
+import java.util.UUID;
 
 
 public class QuestionActivity extends Activity {
 
     Topic topic=null;
     int topicId;
+    MediaRecorder mRecorder;
+    boolean Recording;
+    ImageButton imageButton;
+    TextView textView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +42,11 @@ public class QuestionActivity extends Activity {
         topic=Topic.getTopicList().get(topicId);
         refreshQuestionList();
 
+        imageButton= (ImageButton)findViewById(R.id.Ib_record);
+        imageButton.setEnabled(false);
+
+        textView = (TextView) findViewById(R.id.tx_tip);
+        textView.setEnabled(false);
         ListView listView=(ListView)findViewById(R.id.lv_question);
         registerForContextMenu(listView);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -100,12 +116,70 @@ public class QuestionActivity extends Activity {
         return true;
     }
 
-    private void recordAnswer(int questionsId){
-        Intent intent = new Intent(this,Recording.class);
-        intent.putExtra("QuestionId",questionsId);
-        intent.putExtra("TopicId",topicId);
-        startActivity(intent);
+    private void recordAnswer(final int questionsId){
+//        Intent intent = new Intent(this,Recording.class);
+//        intent.putExtra("QuestionId",questionsId);
+//        intent.putExtra("TopicId",topicId);
+//        startActivity(intent);
+
+        textView.setEnabled(true);
+        imageButton.setEnabled(true);
+        imageButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        if(!Recording) {
+                            startRecording(topic.getQuestionList().get(questionsId));
+                            Recording = true;
+                        }
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        if(Recording) {
+                            stopRecording();
+                            imageButton.setEnabled(false);
+                            textView.setEnabled(false);
+                            Recording = false;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                return false;
+            }
+        });
     }
+
+    private void startRecording(Questions questions){
+        mRecorder = new MediaRecorder();
+        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+        String filename=questions.getFilename();
+        if(filename==null) {
+            filename = UUID.randomUUID().toString();
+            questions.setFilename(filename);
+        }
+        questions.setFilename(filename);
+        mRecorder.setOutputFile(questions.getPath());
+        mRecorder.setAudioChannels(1);
+        mRecorder.setAudioSamplingRate(44100);
+        mRecorder.setAudioEncodingBitRate(44100);
+
+        try {
+            mRecorder.prepare();
+            mRecorder.start();
+        } catch ( IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this,e.toString(),Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void stopRecording(){
+        mRecorder.stop();
+        mRecorder.release();
+    }
+
     private void removeQuestion(final int questionId){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Do you want to delete this question?")

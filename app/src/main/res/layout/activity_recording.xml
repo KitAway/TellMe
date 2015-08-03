@@ -3,12 +3,28 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <TextView
+        android:id="@+id/tx_topic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/hello_world"/>
+    <VideoView
+        android:id="@+id/vv_topic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/tx_question_record"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
     <TextView android:text="@string/recordTip" android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
     <ImageButton
-        android:id="@+id/Ibtn_record"
+        android:id="@+id/btn_record"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_action_mic"

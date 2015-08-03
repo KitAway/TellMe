@@ -1,16 +1,42 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <TextView android:text="@string/listQuestion"
-        android:layout_width="fill_parent"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/largeFontSize"/>
-    <ListView
-        android:id="@+id/lv_question"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center" />
+        android:orientation="vertical"
+        android:layout_alignParentTop="true">
 
-</LinearLayout>
+        <TextView android:text="@string/listQuestion"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/largeFontSize"/>
+        <ListView
+            android:id="@+id/lv_question"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/tx_tip"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/recordTip"/>
+        <ImageButton
+            android:id="@+id/Ib_record"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_action_mic"
+            android:layout_gravity="center" />
+    </LinearLayout>
+
+
+</RelativeLayout>

@@ -97,8 +97,10 @@ public class MainActivity extends Activity {
         int topicId= info.position;
         switch (menuItemId) {
             case 0:
+                recordTopic(topicId);
                 break;
             case 1:
+                listenTopic(topicId);
                 break;
             case 2:
                 viewQuestion(topicId);
@@ -131,6 +133,16 @@ public class MainActivity extends Activity {
         }
     }
 
+    private void recordTopic(int topicId){
+        Intent intent = new Intent(this,Recording.class);
+        intent.putExtra("TopicId",topicId);
+        startActivity(intent);
+    }
+    private void listenTopic(int topicId){
+        Intent intent = new Intent(this,Listen2Topic.class);
+        intent.putExtra("TopicId",topicId);
+        startActivity(intent);
+    }
     private void removeTopic(final int topicId){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Do you want to delete this topic?")
