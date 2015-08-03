@@ -45,7 +45,7 @@ public class Recording extends Activity {
 
         Intent intent = getIntent();
         Topic topic = Topic.getTopicList().get(intent.getIntExtra("TopicId", 0));
-        ((TextView) findViewById(R.id.tx_topic)).setText(topic.getTopic());
+        ((TextView) findViewById(R.id.tx_topic)).setText("Topic:"+topic.getTopic());
         ArrayList<Questions> questionsArrayList=topic.getQuestionList();
         iterator  = questionsArrayList.iterator();
         tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {

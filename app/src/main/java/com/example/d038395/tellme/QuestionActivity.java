@@ -45,6 +45,7 @@ public class QuestionActivity extends Activity {
         imageButton= (ImageButton)findViewById(R.id.Ib_record);
         imageButton.setEnabled(false);
 
+        ((TextView)findViewById(R.id.tx_topic_question)).setText("Topic:"+topic.getTopic());
         textView = (TextView) findViewById(R.id.tx_tip);
         textView.setEnabled(false);
         ListView listView=(ListView)findViewById(R.id.lv_question);
