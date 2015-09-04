@@ -25,6 +25,7 @@ import android.widget.VideoView;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.UUID;
@@ -95,11 +96,12 @@ public class Recording extends Activity {
 
             @Override
             public void onError(String utteranceId) {
-
+                Toast.makeText(Recording.this, "TTs failure.", Toast.LENGTH_SHORT).show();
             }
         });
 
-        tts.speak(questions.getQuestion(),TextToSpeech.QUEUE_ADD,null,"question");
+//        tts.speak(questions.getQuestion(),TextToSpeech.QUEUE_ADD,null,"question");
+        tts.speak(questions.getQuestion(),TextToSpeech.QUEUE_ADD, new HashMap<String, String>());
     }
 
     private void recording(){

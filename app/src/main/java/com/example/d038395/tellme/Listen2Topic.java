@@ -16,6 +16,7 @@ import android.widget.VideoView;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 
@@ -83,8 +84,9 @@ public class Listen2Topic extends Activity {
             }
         });
         //Toast.makeText(this,questions.getQuestion(),Toast.LENGTH_SHORT).show();
-        tts.speak(questions.getQuestion(), TextToSpeech.QUEUE_ADD,
-                null, questions.getQuestion());
+//        tts.speak(questions.getQuestion(), TextToSpeech.QUEUE_ADD,
+//                null, questions.getQuestion());
+        tts.speak(questions.getQuestion(),TextToSpeech.QUEUE_ADD,new HashMap<String, String>());
     }
 
     private void playAnswer(Questions questions){
