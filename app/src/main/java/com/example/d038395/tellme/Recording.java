@@ -8,6 +8,7 @@ import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
@@ -52,11 +53,12 @@ public class Recording extends Activity {
         tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
-                if(status==TextToSpeech.SUCCESS)
+                if(status==TextToSpeech.SUCCESS) {
+                    tts.setLanguage(Locale.US);
                     start();
+                }
             }
         });
-        tts.setLanguage(Locale.US);
 
         videoView=(VideoView) findViewById(R.id.vv_topic);
         videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -100,8 +102,16 @@ public class Recording extends Activity {
             }
         });
 
-//        tts.speak(questions.getQuestion(),TextToSpeech.QUEUE_ADD,null,"question");
-        tts.speak(questions.getQuestion(),TextToSpeech.QUEUE_ADD, new HashMap<String, String>());
+
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
+            HashMap<String,String> hashMap = new HashMap<>();
+            hashMap.put(questions.getQuestion(),questions.getQuestion());
+            tts.speak(questions.getQuestion(),TextToSpeech.QUEUE_ADD,hashMap);
+        }
+        else {
+            tts.speak(questions.getQuestion(), TextToSpeech.QUEUE_ADD,
+                    null, questions.getQuestion());
+        }
     }
 
     private void recording(){
