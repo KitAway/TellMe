@@ -105,7 +105,7 @@ public class Recording extends Activity {
 
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
             HashMap<String,String> hashMap = new HashMap<>();
-            hashMap.put(questions.getQuestion(),questions.getQuestion());
+            hashMap.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "UniqueID");
             tts.speak(questions.getQuestion(),TextToSpeech.QUEUE_ADD,hashMap);
         }
         else {
@@ -134,6 +134,7 @@ public class Recording extends Activity {
                                 questions=iterator.next();
                                 playQuestion();
                             }
+                            else  finish();
                         }
                         break;
                     default:

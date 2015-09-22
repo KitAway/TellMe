@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.transition.Explode;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,14 +26,127 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.zip.Inflater;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.Scopes;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.plus.Plus;
+import com.google.android.gms.plus.model.people.Person;
 
-public class MainActivity extends Activity {
+
+public class MainActivity extends Activity implements
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        View.OnClickListener{
 
     private static String appPath;
+    /* Request code used to invoke sign in user interactions. */
+    private static final int RC_SIGN_IN = 0;
+    private String TAG="";
+    /* Client used to interact with Google APIs. */
+    private GoogleApiClient mGoogleApiClient;
+    /* Is there a ConnectionResult resolution in progress? */
+    private boolean mIsResolving = false;
+
+    /* Should we automatically resolve ConnectionResults when possible? */
+    private boolean mShouldResolve = false;
+    @Override
+    public void onConnected(Bundle bundle) {
+// onConnected indicates that an account was selected on the device, that the selected
+        // account has granted any requested permissions to our app and that we were able to
+        // establish a service connection to Google Play services.
+        Log.d(TAG, "onConnected:" + bundle);
+        mShouldResolve = false;
+
+        // Show the signed-in UI
+        showSignedInUI();
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d(TAG, "onActivityResult:" + requestCode + ":" + resultCode + ":" + data);
+
+        if (requestCode == RC_SIGN_IN) {
+            // If the error resolution was not successful we should not resolve further.
+            if (resultCode != RESULT_OK) {
+                mShouldResolve = false;
+            }
+
+            mIsResolving = false;
+            mGoogleApiClient.connect();
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.sign_in_button) {
+            onSignInClicked();
+        }
+        if (v.getId() == R.id.sign_out_button) {
+            if (mGoogleApiClient.isConnected()) {
+                Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
+                mGoogleApiClient.disconnect();
+            }
+
+        }
+    }
+
+    private void onSignInClicked() {
+        // User clicked the sign-in button, so begin the sign-in process and automatically
+        // attempt to resolve any errors that occur.
+        mShouldResolve = true;
+        mGoogleApiClient.connect();
+
+        // Show a message to the user that we are signing in.
+       // mStatusTextView.setText(R.string.signing_in);
+    }
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+// Could not connect to Google Play Services.  The user needs to select an account,
+        // grant permissions or resolve an error in order to sign in. Refer to the javadoc for
+        // ConnectionResult to see possible error codes.
+        Log.d(TAG, "onConnectionFailed:" + connectionResult);
+
+        if (!mIsResolving && mShouldResolve) {
+            if (connectionResult.hasResolution()) {
+                try {
+                    connectionResult.startResolutionForResult(this, RC_SIGN_IN);
+                    mIsResolving = true;
+                } catch (IntentSender.SendIntentException e) {
+                    Log.e(TAG, "Could not resolve ConnectionResult.", e);
+                    mIsResolving = false;
+                    mGoogleApiClient.connect();
+                }
+            } else {
+                // Could not resolve the connection result, show the user an
+                // error dialog.
+                showErrorDialog(connectionResult);
+            }
+        } else {
+            // Show the signed-out UI
+            showSignedOutUI();
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(Plus.API)
+                .addScope(new Scope(Scopes.PROFILE))
+                .build();
 
         appPath= Environment.getExternalStorageDirectory().getPath()+ File.separator+getString(R.string.app_name)+File.separator;
         File app_path= new File(appPath);
@@ -43,44 +158,22 @@ public class MainActivity extends Activity {
         Questions.setApp_path(appPath);
         Topic.initialize(appPath);
 
-        if (Topic.firstRun){
-            Topic first= new Topic("Unforgettable trip");
-            Topic second = new Topic("First lesson in primary school");
-            Topic third = new Topic("My childhood");
 
-            first.addQuestion(new Questions("When was the trip?"));
-            first.addQuestion(new Questions("Who did you go with?"));
-            first.addQuestion(new Questions("Where did you go?"));
-            first.addQuestion(new Questions("Could you tell us more details about this trip?"));
-
-            second.addQuestion(new Questions("Who was the teacher?"));
-            second.addQuestion(new Questions("What's the topic?"));
-            second.addQuestion(new Questions("Could you tell us more details about this lesson?"));
-
-            third.addQuestion(new Questions("Where did you stay when you were a child?"));
-            third.addQuestion(new Questions("Could you tell us more details about your childhood?"));
-
-            first.addTopic();
-            second.addTopic();
-            third.addTopic();
-        }
-
-        refreshListView();
-        ListView listView = (ListView)findViewById(R.id.lv_topic);
-        registerForContextMenu(listView);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                openContextMenu(view);
-            }
-        });
     }
 
     @Override
     protected void onStop() {
-        Topic.storeResult();
         super.onStop();
+        Topic.storeResult();
+        mGoogleApiClient.disconnect();
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mGoogleApiClient.connect();
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -161,11 +254,7 @@ public class MainActivity extends Activity {
                 .setNegativeButton(R.string.cancel,null)
                 .create().show();
     }
-    private void refreshListView(){
-        ListView listView = (ListView)findViewById(R.id.lv_topic);
-        ArrayAdapter arrayAdapter = new ArrayAdapter<>(this, R.layout.topic_list, Topic.getTopicList());
-        listView.setAdapter(arrayAdapter);
-    }
+    
 
 
     private void viewQuestion(int topicId){

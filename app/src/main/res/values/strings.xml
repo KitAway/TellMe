@@ -15,4 +15,5 @@
     <string name="recordTip">Press the button and hold to record</string>
     <string name="title_activity_listen2_topic">Listen2Topic</string>
     <string name="tx_listen">Listen to the questions and your answers</string>
+    <string name="title_activity_topic_panel">TopicPanel</string>
 </resources>

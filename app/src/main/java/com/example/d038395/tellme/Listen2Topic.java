@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 
-
 public class Listen2Topic extends Activity {
 
     Topic topic;
@@ -77,8 +76,8 @@ public class Listen2Topic extends Activity {
 
             @Override
             public void onDone(String utteranceId) {
-                playAnswer(questions);
                 videoView.pause();
+                playAnswer(questions);
             }
 
             @Override
@@ -103,10 +102,10 @@ public class Listen2Topic extends Activity {
     private void playAnswer(Questions questions){
         String path = questions.getPath();
         if(path==null){
-            Toast.makeText(this,"No record for this question.",Toast.LENGTH_SHORT).show();
-            if(questionsIterator.hasNext())
-                playQuestion(questionsIterator.next());
-            return;
+           // Toast.makeText(this,"No record for this question.",Toast.LENGTH_SHORT).show();
+//            if(questionsIterator.hasNext())
+//                playQuestion(questionsIterator.next());
+            finish();
         }
         mediaPlayer = new MediaPlayer();
         try {
@@ -117,6 +116,7 @@ public class Listen2Topic extends Activity {
                     mp.release();
                     if(questionsIterator.hasNext())
                         playQuestion(questionsIterator.next());
+                    else finish();
                 }
             });
             mediaPlayer.prepare();
