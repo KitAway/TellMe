@@ -4,4 +4,9 @@
     tools:context="com.example.d038395.tellme.TopicPanel">
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
         android:orderInCategory="100" app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_addTopic"
+        android:title="@string/str_addTopic"
+        app:showAsAction="ifRoom"/>
 </menu>
