@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.transition.Explode;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -139,6 +141,8 @@ public class MainActivity extends Activity {
         startActivity(intent);
     }
     private void listenTopic(int topicId){
+        if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.LOLLIPOP)
+            getWindow().setExitTransition(new Explode());
         Intent intent = new Intent(this,Listen2Topic.class);
         intent.putExtra("TopicId",topicId);
         startActivity(intent);

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
@@ -27,6 +28,7 @@ public class Listen2Topic extends Activity {
     ArrayList<Questions> questionsArrayList;
     Iterator<Questions> questionsIterator;
     TextToSpeech tts;
+    MediaPlayer mediaPlayer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,13 +44,14 @@ public class Listen2Topic extends Activity {
             @Override
             public void onInit(int status) {
                 if(status==TextToSpeech.SUCCESS){
-                    Toast.makeText(Listen2Topic.this,"Success",Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(Listen2Topic.this,"Success",Toast.LENGTH_SHORT).show();
+                    tts.setLanguage(Locale.US);
                     if(questionsIterator.hasNext())
                         playQuestion(questionsIterator.next());
                 }
             }
         });
-        tts.setLanguage(Locale.US);
+
         final VideoView videoView = (VideoView) findViewById(R.id.vv_question);
         Uri uri =Uri.parse("android.resource://" + getPackageName() +'/'+ R.raw.animation_speaking);
         videoView.setVideoURI(uri);
@@ -86,7 +89,15 @@ public class Listen2Topic extends Activity {
         //Toast.makeText(this,questions.getQuestion(),Toast.LENGTH_SHORT).show();
 //        tts.speak(questions.getQuestion(), TextToSpeech.QUEUE_ADD,
 //                null, questions.getQuestion());
-        tts.speak(questions.getQuestion(),TextToSpeech.QUEUE_ADD,new HashMap<String, String>());
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
+        {
+            HashMap<String,String> hashMap = new HashMap<>();
+            hashMap.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "UniqueID");
+            tts.speak(questions.getQuestion(),TextToSpeech.QUEUE_ADD,hashMap);
+        } else {
+            tts.speak(questions.getQuestion(), TextToSpeech.QUEUE_ADD,
+                            null, questions.getQuestion());
+        }
     }
 
     private void playAnswer(Questions questions){
@@ -95,7 +106,7 @@ public class Listen2Topic extends Activity {
             Toast.makeText(this,"No record",Toast.LENGTH_SHORT).show();
             return;
         }
-        MediaPlayer mediaPlayer = new MediaPlayer();
+        mediaPlayer = new MediaPlayer();
         try {
             mediaPlayer.setDataSource(questions.getPath());
             mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -120,6 +131,8 @@ public class Listen2Topic extends Activity {
     protected void onDestroy() {
         if(tts!=null)
             tts.shutdown();
+        if(mediaPlayer!=null)
+            mediaPlayer.release();
         super.onDestroy();
     }
 
