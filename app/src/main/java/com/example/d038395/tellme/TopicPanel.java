@@ -21,7 +21,7 @@ import android.widget.Toast;
 import java.io.File;
 
 
-public class MainActivity extends Activity {
+public class TopicPanel extends Activity {
 
 
     private static String appPath;
