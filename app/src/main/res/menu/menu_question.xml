@@ -1,9 +1,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:activity="com.example.d038395.tellme.QuestionActivity">
     <!--<item android:id="@+id/action_settings" android:title="@string/action_settings"-->
         <!--android:orderInCategory="100" android:showAsAction="never" />-->
     <item android:id="@+id/action_addQuestion"
-        android:showAsAction="ifRoom"
+        app:showAsAction="ifRoom"
         android:title="@string/str_addQuestion"/>
 </menu>

@@ -1,29 +1,23 @@
 package com.example.d038395.tellme;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -106,7 +100,7 @@ public class Recording extends Activity {
 
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
             HashMap<String,String> hashMap = new HashMap<>();
-            hashMap.put(questions.getQuestion(),questions.getQuestion());
+            hashMap.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "UniqueID");
             tts.speak(questions.getQuestion(),TextToSpeech.QUEUE_ADD,hashMap);
         }
         else {
@@ -174,40 +168,38 @@ public class Recording extends Activity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+
 
         return super.onOptionsItemSelected(item);
     }
 
-            private void startRecording(){
-                mRecorder = new MediaRecorder();
-                mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-                mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-                mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-                String filename=questions.getFilename();
-                if(filename==null) {
-                    filename = UUID.randomUUID().toString();
-                    questions.setFilename(filename);
-                }
-                questions.setFilename(filename);
-                mRecorder.setOutputFile(questions.getPath(this).getPath());
-                mRecorder.setAudioChannels(1);
-                mRecorder.setAudioSamplingRate(44100);
-                mRecorder.setAudioEncodingBitRate(44100);
+    private void startRecording(){
+        mRecorder = new MediaRecorder();
+        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+        String filename=questions.getFilename();
+        if(filename==null) {
+            filename = UUID.randomUUID().toString();
+            questions.setFilename(filename);
+        }
+        questions.setFilename(filename);
+        mRecorder.setOutputFile(questions.getPath(this).getPath());
+        mRecorder.setAudioChannels(1);
+        mRecorder.setAudioSamplingRate(44100);
+        mRecorder.setAudioEncodingBitRate(44100);
 
-                try {
-                    mRecorder.prepare();
-                    mRecorder.start();
-                } catch ( IOException e) {
-                    e.printStackTrace();
-                    Toast.makeText(this,e.toString(),Toast.LENGTH_LONG).show();
-                }
-            }
+        try {
+            mRecorder.prepare();
+            mRecorder.start();
+        } catch ( IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this,e.toString(),Toast.LENGTH_LONG).show();
+        }
+    }
 
-            private void stopRecording(){
-                mRecorder.stop();
-                mRecorder.release();
-            }
+    private void stopRecording(){
+        mRecorder.stop();
+        mRecorder.release();
+    }
 }

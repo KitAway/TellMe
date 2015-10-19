@@ -80,8 +80,9 @@ public class Listen2Topic extends Activity {
 
             @Override
             public void onDone(String utteranceId) {
-                playAnswer(questions);
                 videoView.pause();
+                playAnswer(questions);
+
             }
 
             @Override
@@ -120,6 +121,7 @@ public class Listen2Topic extends Activity {
                     mp.release();
                     if(questionsIterator.hasNext())
                         playQuestion(questionsIterator.next());
+                    else finish();
                 }
             });
             mediaPlayer.prepare();
@@ -144,7 +146,7 @@ public class Listen2Topic extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_listen2_topic, menu);
+        getMenuInflater().inflate(R.menu.menu_listen2topic, menu);
         return true;
     }
 
@@ -156,10 +158,6 @@ public class Listen2Topic extends Activity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 }

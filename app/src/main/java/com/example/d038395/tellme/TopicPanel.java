@@ -9,11 +9,14 @@ import android.os.Bundle;
 import android.os.Environment;
 
 import android.transition.Explode;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -28,7 +31,7 @@ public class TopicPanel extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_topicpanel);
         appPath= Environment.getExternalStorageDirectory().getPath()+ File.separator+getString(R.string.app_name)+File.separator;
         File app_path= new File(appPath);
         if(!app_path.isDirectory()){
@@ -82,11 +85,50 @@ public class TopicPanel extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_topicpanel, menu);
         return true;
     }
-
-
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        switch (v.getId()){
+            case R.id.lv_topic:
+                AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+                menu.setHeaderTitle(Topic.getTopicList().get(info.position).toString());
+                String [] menuItem = getResources().getStringArray(R.array.arrayTopicContextMenu);
+                for (int i=0; i < menuItem.length;i++){
+                    menu.add(Menu.NONE,i,0,menuItem[i]);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info =
+                (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+        int menuItemId=item.getItemId();
+//        String [] menuItem = getResources().getStringArray(R.array.arrayTopicContextMenu);
+//        String menuItemName=menuItem[menuItemId];
+        int topicId= info.position;
+        switch (menuItemId) {
+            case 0:
+                recordTopic(topicId);
+                break;
+            case 1:
+                listenTopic(topicId);
+                break;
+            case 2:
+                viewQuestion(topicId);
+                break;
+            case 3:
+                removeTopic(topicId);
+                break;
+            default:
+                break;
+        }
+        return true;
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -95,11 +137,17 @@ public class TopicPanel extends Activity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_addTopic) {
+            addTopicDialog();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+    private void viewQuestion(int topicId){
+        Intent intent = new Intent(this,QuestionActivity.class);
+        intent.putExtra("TopicId", topicId);
+        startActivity(intent);
     }
 
     private void listenTopic(int topicId){
@@ -129,5 +177,38 @@ public class TopicPanel extends Activity {
         ArrayAdapter arrayAdapter = new ArrayAdapter<>(this, R.layout.topic_list, Topic.getTopicList());
         listView.setAdapter(arrayAdapter);
     }
+    private void recordTopic(int topicId){
+        Intent intent = new Intent(this,Recording.class);
+        intent.putExtra("TopicId",topicId);
+        startActivity(intent);
+    }
+
+    private void addTopicDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final AlertDialog dialog;
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_addtopic,null);
+        final EditText editText =(EditText) dialogView.findViewById(R.id.et_topicName);
+        builder.setTitle("Add new Topic")
+                .setView(dialogView)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Topic.addTopic(editText.getText().toString());
+                        refreshListView();
+                    }
+                })
+                .setNegativeButton(R.string.cancel,null);
+        dialog=builder.create();
+        editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus)
+                    dialog.getWindow().
+                            setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+            }
+        });
+        dialog.show();
+    }
+
 
 }

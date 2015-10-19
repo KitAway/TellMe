@@ -3,13 +3,16 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <Button android:id="@+id/sign_in_button"
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/signIn"/>
-    <Button android:id="@+id/sign_out_button"
+        android:text="@string/topic"
+        android:textSize="@dimen/largeFontSize"/>
+    <ListView
+        android:id="@+id/lv_topic"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/signOut"/>
+        android:layout_height="wrap_content">
+
+    </ListView>
 
 </LinearLayout>
