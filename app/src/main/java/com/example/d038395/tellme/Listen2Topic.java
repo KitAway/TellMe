@@ -104,7 +104,7 @@ public class Listen2Topic extends Activity {
         String path = questions.getPath();
         if(path==null){
             Toast.makeText(this,"No record",Toast.LENGTH_SHORT).show();
-            return;
+            finish();
         }
         mediaPlayer = new MediaPlayer();
         try {
