@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,7 +45,9 @@ public class Listen2Topic extends Activity {
             @Override
             public void onInit(int status) {
                 if(status==TextToSpeech.SUCCESS){
+
                     //Toast.makeText(Listen2Topic.this,"Success",Toast.LENGTH_SHORT).show();
+
                     tts.setLanguage(Locale.US);
                     if(questionsIterator.hasNext())
                         playQuestion(questionsIterator.next());
@@ -87,6 +90,7 @@ public class Listen2Topic extends Activity {
             }
         });
         //Toast.makeText(this,questions.getQuestion(),Toast.LENGTH_SHORT).show();
+
 //        tts.speak(questions.getQuestion(), TextToSpeech.QUEUE_ADD,
 //                null, questions.getQuestion());
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
@@ -98,17 +102,18 @@ public class Listen2Topic extends Activity {
             tts.speak(questions.getQuestion(), TextToSpeech.QUEUE_ADD,
                             null, questions.getQuestion());
         }
+
     }
 
     private void playAnswer(Questions questions){
-        String path = questions.getPath();
+        File path = questions.getPath(this);
         if(path==null){
-            Toast.makeText(this,"No record",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"No record for this question.",Toast.LENGTH_SHORT).show();
             finish();
         }
         mediaPlayer = new MediaPlayer();
         try {
-            mediaPlayer.setDataSource(questions.getPath());
+            mediaPlayer.setDataSource(questions.getPath(this).getPath());
             mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mp) {

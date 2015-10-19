@@ -1,5 +1,7 @@
 package com.example.d038395.tellme;
 
+import android.content.Context;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -16,7 +18,7 @@ import java.util.ArrayList;
 public class Topic implements Serializable{
     public static boolean firstRun=false;
     private String topic;
-    private static String data_storage;
+    private static String filename;
     private static ArrayList<Topic> topicList=null;
     private ArrayList<Questions> questionList=null;
 
@@ -57,16 +59,17 @@ public class Topic implements Serializable{
         return arrayList;
     }
 
-    public static void initialize(String dir){
-        data_storage=dir+"topicList";
-        restoreResult();
+    public static void initialize(Context context){
+        filename ="topicList";
+        restoreResult(context);
     }
-    public static void storeResult(){
+    public static void storeResult(Context context){
         FileOutputStream fout=null;
         ObjectOutputStream objOut=null;
+        File file=new File(context.getFilesDir(),filename);
         try {
-            fout= new FileOutputStream(data_storage);
-             objOut= new ObjectOutputStream(fout);
+            fout= new FileOutputStream(file);
+            objOut= new ObjectOutputStream(fout);
             objOut.writeObject(topicList);
 
 
@@ -89,14 +92,14 @@ public class Topic implements Serializable{
         }
     }
 
-    private static void restoreResult(){
+    private static void restoreResult(Context context){
         FileInputStream fin=null;
         ObjectInputStream objIn=null;
         if(topicList !=null)
             return;
-        if(new File(data_storage).isFile()) {
+        if(new File(context.getFilesDir(),filename).isFile()) {
             try {
-                fin = new FileInputStream(data_storage);
+                fin = new FileInputStream(filename);
                 objIn = new ObjectInputStream(fin);
                 topicList = (ArrayList<Topic>) objIn.readObject();
                 firstRun=false;

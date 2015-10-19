@@ -1,27 +1,22 @@
 package com.example.d038395.tellme;
 
+import android.content.Context;
+import android.os.Environment;
+
+import java.io.File;
 import java.io.Serializable;
 
 /**
  * Created by d038395 on 2015-07-20.
  */
 public class Questions implements Serializable{
-    private static String app_path;
     private String question;
     private String answer;
     private String filename;
 
-    public static void setApp_path(String app_path) {
-        Questions.app_path = app_path;
-    }
-
-    public static String getApp_path() {
-        return app_path;
-    }
-
-    public String getPath(){
+    public File getPath(Context context){
         if(filename!=null)
-            return app_path+filename;
+            return new File(context.getExternalFilesDir(Environment.DIRECTORY_MUSIC),filename);
         else
             return null;
     }
