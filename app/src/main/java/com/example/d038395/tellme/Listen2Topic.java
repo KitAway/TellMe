@@ -15,11 +15,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
+
 
 public class Listen2Topic extends Activity {
 
@@ -76,8 +78,8 @@ public class Listen2Topic extends Activity {
 
             @Override
             public void onDone(String utteranceId) {
-                videoView.pause();
                 playAnswer(questions);
+                videoView.pause();
             }
 
             @Override
@@ -100,23 +102,29 @@ public class Listen2Topic extends Activity {
     }
 
     private void playAnswer(Questions questions){
-        String path = questions.getPath();
+        File path = questions.getPath(this);
         if(path==null){
+<<<<<<< HEAD
            // Toast.makeText(this,"No record for this question.",Toast.LENGTH_SHORT).show();
 //            if(questionsIterator.hasNext())
 //                playQuestion(questionsIterator.next());
-            finish();
+            finishActivity(-1);
+=======
+            Toast.makeText(this,"No record for this question.",Toast.LENGTH_SHORT).show();
+            if(questionsIterator.hasNext())
+                playQuestion(questionsIterator.next());
+            return;
+>>>>>>> parent of b8ff507... add google login option_not finished
         }
         mediaPlayer = new MediaPlayer();
         try {
-            mediaPlayer.setDataSource(questions.getPath());
+            mediaPlayer.setDataSource(questions.getPath(this).getPath());
             mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mp) {
                     mp.release();
                     if(questionsIterator.hasNext())
                         playQuestion(questionsIterator.next());
-                    else finish();
                 }
             });
             mediaPlayer.prepare();

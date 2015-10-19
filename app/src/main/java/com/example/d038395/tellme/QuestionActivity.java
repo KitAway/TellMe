@@ -20,6 +20,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
@@ -85,14 +86,14 @@ public class QuestionActivity extends Activity {
         Questions question=topic.getQuestionList().get(questionId);
         switch (menuItemId) {
             case 0:
-                String audioPath=question.getPath();
+                File audioPath=question.getPath(this);
                 if(audioPath!=null)
                     new AudioPlayer(this,audioPath,
                             question.toString()).play();
                 else Toast.makeText(this, "No record exists.", Toast.LENGTH_LONG).show();
                 break;
             case 1:
-                audioPath=question.getPath();
+                audioPath=question.getPath(this);
                 if(audioPath!=null){
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setMessage("Answer exists, do you want to change the answer?")
@@ -162,7 +163,7 @@ public class QuestionActivity extends Activity {
             questions.setFilename(filename);
         }
         questions.setFilename(filename);
-        mRecorder.setOutputFile(questions.getPath());
+        mRecorder.setOutputFile(questions.getPath(this).getPath());
         mRecorder.setAudioChannels(1);
         mRecorder.setAudioSamplingRate(44100);
         mRecorder.setAudioEncodingBitRate(44100);
@@ -210,7 +211,7 @@ public class QuestionActivity extends Activity {
 
     @Override
     protected void onStop() {
-        Topic.storeResult();
+        Topic.storeResult(this);
         super.onStop();
     }
 

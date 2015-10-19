@@ -16,9 +16,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class TopicPanel extends AppCompatActivity {
 
+    private static final int AR_TOPIC_LISTEN=1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,7 +74,7 @@ public class TopicPanel extends AppCompatActivity {
             getWindow().setExitTransition(new Explode());
         Intent intent = new Intent(this,Listen2Topic.class);
         intent.putExtra("TopicId",topicId);
-        startActivity(intent);
+        startActivityForResult(intent, AR_TOPIC_LISTEN);
     }
     private void removeTopic(final int topicId){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -122,6 +124,20 @@ public class TopicPanel extends AppCompatActivity {
         });
         dialog.show();
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode){
+            case AR_TOPIC_LISTEN:
+                if(resultCode==-1)
+                    Toast.makeText(this,"No record exists.",Toast.LENGTH_LONG).show();
+                break;
+            default:
+                break;
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -132,7 +148,7 @@ public class TopicPanel extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        Topic.storeResult();
+        Topic.storeResult(this);
     }
 
     @Override

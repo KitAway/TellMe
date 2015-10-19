@@ -5,9 +5,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
 
     <application
         android:allowBackup="true"
@@ -26,7 +23,7 @@
         <activity
             android:name=".QuestionActivity"
             android:label="@string/title_activity_question"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".TopicPanel" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.d038395.tellme.MainActivity" />
@@ -34,7 +31,7 @@
         <activity
             android:name=".Recording"
             android:label="@string/title_activity_recording"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".TopicPanel" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.d038395.tellme.MainActivity" />
@@ -42,19 +39,21 @@
         <activity
             android:name=".Listen2Topic"
             android:label="@string/title_activity_listen2_topic"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".TopicPanel" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.d038395.tellme.MainActivity" />
         </activity>
+<<<<<<< HEAD
         <activity
             android:name=".TopicPanel"
-            android:label="@string/title_activity_topic_panel"
-            android:parentActivityName=".MainActivity" >
+            android:label="@string/title_activity_topic_panel" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.d038395.tellme.MainActivity" />
         </activity>
+=======
+>>>>>>> parent of b8ff507... add google login option_not finished
     </application>
 
 </manifest>

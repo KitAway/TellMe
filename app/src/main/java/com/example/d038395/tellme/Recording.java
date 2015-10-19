@@ -105,7 +105,7 @@ public class Recording extends Activity {
 
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
             HashMap<String,String> hashMap = new HashMap<>();
-            hashMap.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "UniqueID");
+            hashMap.put(questions.getQuestion(),questions.getQuestion());
             tts.speak(questions.getQuestion(),TextToSpeech.QUEUE_ADD,hashMap);
         }
         else {
@@ -134,7 +134,6 @@ public class Recording extends Activity {
                                 questions=iterator.next();
                                 playQuestion();
                             }
-                            else  finish();
                         }
                         break;
                     default:
@@ -146,7 +145,7 @@ public class Recording extends Activity {
     }
     @Override
     protected void onStop() {
-        Topic.storeResult();
+        Topic.storeResult(this);
         super.onStop();
     }
 
@@ -190,7 +189,7 @@ public class Recording extends Activity {
                     questions.setFilename(filename);
                 }
                 questions.setFilename(filename);
-                mRecorder.setOutputFile(questions.getPath());
+                mRecorder.setOutputFile(questions.getPath(this).getPath());
                 mRecorder.setAudioChannels(1);
                 mRecorder.setAudioSamplingRate(44100);
                 mRecorder.setAudioEncodingBitRate(44100);

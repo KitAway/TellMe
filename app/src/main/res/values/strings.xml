@@ -15,7 +15,10 @@
     <string name="recordTip">Press the button and hold to record</string>
     <string name="title_activity_listen2_topic">Listen2Topic</string>
     <string name="tx_listen">Listen to the questions and your answers</string>
+<<<<<<< HEAD
     <string name="title_activity_topic_panel">TopicPanel</string>
     <string name="signIn">Sign In</string>
     <string name="signOut">Sign Out</string>
+=======
+>>>>>>> parent of b8ff507... add google login option_not finished
 </resources>
